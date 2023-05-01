@@ -38,8 +38,7 @@ def main():
                        sx={'display': 'flex',
                            'flexDirection': 'column',
                            'borderRadius': 3,
-                           'overflow': 'hidden',
-                        #    'height': 1000
+                           'overflow': 'hidden'
                            },
                        elevation=1):
             with mui.Box(sx={'flex': 1, 'minHeight': 0}):
