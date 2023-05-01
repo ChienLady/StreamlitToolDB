@@ -20,14 +20,17 @@ def save_config():
         yaml.dump(st.session_state['config'], file)
 
 def login():
-    name, st.session_state['authentication_status'], username = authenticator.login('Login', 'main')
-    if st.session_state['authentication_status']:
+    name, authentication_status, username = authenticator.login('Login', 'main')
+    if authentication_status:
         st.session_state['name'] = name
         st.session_state['username'] = username
-    elif st.session_state['authentication_status'] is False:
+    elif authentication_status is False:
         st.error('Username/password is incorrect')
-    elif st.session_state['authentication_status'] is None:
+    elif authentication_status is None:
         st.warning('Please enter your username and password')
+    
+    if 'authentication_status' not in st.session_state:
+        st.session_state['authentication_status'] = authentication_status
 
 def register():
     try:
@@ -58,9 +61,13 @@ def forgot_username():
     except Exception as e:
         st.error(e)
 
-if __name__ == '__main__':
+def main():
     # Load from cookie
-    authenticator._check_cookie()
+    if 'authentication_status' not in st.session_state:
+        st.session_state['authentication_status'] = None
+        st.session_state['name'] = None
+        st.session_state['username'] = None
+        authenticator._check_cookie()
     if not st.session_state.get('authentication_status', False):
         login_page, register_page, forgot_password_page, forgot_username_page = \
             st.tabs(['Login', 'Register', 'Forgot password', 'Forgot username'])
@@ -73,7 +80,7 @@ if __name__ == '__main__':
         with forgot_username_page:
             forgot_username()
     else:
-        st.sidebar.header(f'Welcom {st.session_state["name"]}')
+        st.sidebar.header(f'Welcom {st.session_state["name"]}!')
         authenticator.logout('Logout', 'sidebar')
         setting = st.sidebar.selectbox('Account settings',
                                        ('Not selected',
@@ -95,4 +102,6 @@ if __name__ == '__main__':
             except Exception as e:
                 st.error(e)
 
+if __name__ == '__main__':
+    main()
 
